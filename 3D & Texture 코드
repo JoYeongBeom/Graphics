@@ -1,0 +1,14 @@
+let img;
+function setup() {
+  createCanvas(400, 400, WEBGL);
+  img = loadImage("neco.jpg");
+}
+
+function draw() {
+  background(200);
+  rotateX(frameCount * 0.02);
+  rotateY(frameCount * 0.02);
+  rotateZ(frameCount * 0.02);
+  texture(img);
+  box(150);
+}
