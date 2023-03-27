@@ -1,0 +1,64 @@
+let cols, rows;
+let scl = 20;
+let w = 1400;
+let h = 1000;
+
+let flying = 0;
+
+let terrain = [];
+
+function setup() {
+  createCanvas(600, 600, WEBGL);
+  cols = w / scl;
+  rows = h / scl;
+  noStroke();
+  for (let x = 0; x < cols; x++) {
+    terrain[x] = [];
+    for (let y = 0; y < rows; y++) {
+      terrain[x][y] = 0; //specify a default value for now
+    }
+  }
+}
+
+function draw() {
+  flying -= 0.1;
+  let yoff = flying;
+  for (let y = 0; y < rows; y++) {
+    let xoff = 0;
+    for (let x = 0; x < cols; x++) {
+      terrain[x][y] = map(noise(xoff, yoff), 0, 1, -110, 250);
+      xoff += 0.03;
+    }
+    yoff += 0.2;
+  }
+
+  background(33, 33, 33);
+  translate(0, 50);
+  rotateX(PI / 3);
+  fill(200, 200, 200, 150);
+  translate(-w / 2, -h / 2);
+  for (let y = 0; y < rows - 1; y++) {
+    beginShape(TRIANGLE_STRIP);
+    for (let x = 0; x < cols; x++) {
+      let v = terrain[x][y];
+      let d = dist(x * scl, y * scl, terrain[x][y], mouseX - width / 2, mouseY - 2000, 0);
+      // map distance to brightness value
+      let b = map(d, 0, 1000, 255, 0);
+      fill(v, v-37, v-100);
+      vertex(x * scl, y * scl, terrain[x][y]);
+      vertex(x * scl, (y + 1) * scl, terrain[x][y + 1]);
+    }
+    endShape();
+  }
+  
+  push();
+  translate(w / 2, h / 2);
+  translate(mouseX - width / 2 , -2000);
+  let d = dist(mouseX, mouseY, 0, w / 2, h / 2, terrain[floor(mouseX / scl)][floor(mouseY / scl)]);
+  let b = map(d, 0, 1000, 255, 0);
+  ambientMaterial(255);
+  specularMaterial(b);
+  sphere(100);
+  pop();
+}
+
