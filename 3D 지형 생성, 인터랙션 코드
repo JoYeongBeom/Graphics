@@ -61,4 +61,3 @@ function draw() {
   sphere(100);
   pop();
 }
-
